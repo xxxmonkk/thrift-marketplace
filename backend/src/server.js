@@ -14,9 +14,9 @@ app.get('/health', (req, res) => res.json({ ok: true }));
 app.use('/auth', require('./routes/auth'));
 app.use('/categories', require('./routes/categories'));
 app.use('/listings', require('./routes/listings'));
-// Sammy adds these (use requireAuth + requireRole from ./middleware/auth):
-// app.use('/admin', require('./routes/admin'));
-// app.use('/orders', require('./routes/orders'));
+app.use('/admin', require('./routes/admin'));
+app.use('/cart', require('./routes/cart'));
+app.use('/orders', require('./routes/orders'));
 
 app.use((req, res) => res.status(404).json({ error: 'Not found' }));
 

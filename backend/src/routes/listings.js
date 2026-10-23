@@ -15,19 +15,23 @@ const LIST_SELECT = `
   FROM listings l
   JOIN categories c ON c.id = l.category_id`;
 
-// GET /listings?category=&q=&min_price=&max_price=   -> LIVE listings only
+// GET /listings?category=&era=&q=&min_price=&max_price=   -> LIVE listings only
 // category can be a category id (2) or a name ("shoes")
 router.get('/', async (req, res) => {
   const where = [`l.status = 'live'`];
   const params = [];
 
-  const { category, q, min_price, max_price } = req.query;
+  const { category, era, q, min_price, max_price } = req.query;
 
   if (category) {
     params.push(category);
     where.push(/^\d+$/.test(category)
       ? `l.category_id = $${params.length}`
       : `c.name ILIKE $${params.length}`);
+  }
+  if (era) {
+    params.push(era);
+    where.push(`lower(l.era) = lower($${params.length})`);
   }
   if (q) {
     params.push(`%${q}%`);
