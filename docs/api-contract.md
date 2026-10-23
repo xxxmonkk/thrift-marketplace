@@ -15,7 +15,7 @@ All requests and responses are JSON.
 | 409 | Conflict (email already used, item already sold) |
 | 500 | Server error |
 
-**Status: ✅ built and tested** means it exists in `backend/`. **🟡 proposed** means not built yet; owner confirms the shape before the frontend relies on it.
+Everything below is ✅ **built and tested** (`npm run demo` in `backend/` runs 45 checks across all flows).
 
 Seed logins (from `seed.sql`): `admin@thrift.test / admin123`, `seller1@thrift.test / seller123`, `buyer1@thrift.test / buyer123`.
 
@@ -69,6 +69,7 @@ Query params (all optional):
 | Param | Notes |
 |---|---|
 | `category` | category id (`2`) or name (`shoes`) |
+| `era` | exact era, case-insensitive (`1990s`) |
 | `q` | text search in title and description |
 | `min_price`, `max_price` | whole numbers; anything else gives `400` |
 
@@ -155,13 +156,13 @@ Errors: `400` (message says which field), `401`, `403` (not a seller).
 
 ---
 
-## Admin review 🟡 proposed (Sammy to confirm)
+## Admin review ✅ (admin token required)
 
-### GET /admin/listings?status=pending
-Who: admin. Response: array of listings like `GET /listings` plus `seller_name` and `images: [{ "id", "url" }]`.
+### GET /admin/listings?status=pending ✅
+Who: admin. `status` defaults to `pending`; any listing status is allowed. Response: array of listings like `GET /listings` plus `seller_name` and `images: [{ "id", "url" }]`.
 
-### POST /admin/listings/:id/review
-Who: admin.
+### POST /admin/listings/:id/review ✅
+Who: admin. Only `pending` listings can be reviewed (otherwise `409`). Also saves a row in `listing_reviews`.
 
 Request: `{ "decision": "approved" | "rejected" | "changes_requested", "reason": "..." }`
 `reason` is required for `rejected` and `changes_requested`. `approved` sets the listing to `live`.
@@ -170,12 +171,35 @@ Response `200`: `{ "id": 7, "status": "live" }`
 
 ---
 
-## Orders 🟡 proposed (Sammy to confirm)
+## Cart ✅ (buyer only; sellers/admins get `403`)
 
-### POST /orders
-Who: buyer. Cart lives in the frontend; this is the checkout. One transaction: every listing must be `live`, then the order is created as `paid` and the listings become `sold`.
+The cart is stored in the database (`cart_items`). Every cart response has the same shape:
+```json
+{
+  "items": [ { "listing_id": 3, "title": "Brown leather belt", "price": 800, "status": "live", "image_url": "https://..." } ],
+  "total": 800
+}
+```
+`total` counts only items that are still `live`. If an item's `status` is `"sold"`, show "no longer available" in the UI.
 
-Request: `{ "listing_ids": [3, 6], "address": "12 MG Road, Ghaziabad" }`
+### GET /cart
+Response `200`: the cart.
+
+### POST /cart
+Request: `{ "listing_id": 3 }`. Adding the same item twice does nothing extra.
+Response `201`: the cart. Errors: `400` bad id, `404` no such listing, `409` item sold or not live.
+
+### DELETE /cart/:listing_id
+Response `200`: the cart (without that item).
+
+---
+
+## Orders ✅ (buyer only)
+
+### POST /orders ✅
+Who: buyer. This is the checkout. One transaction: every listing must be `live`, then the order is created as `paid` and the listings become `sold`.
+
+Request: `{ "address": "12 MG Road, Ghaziabad" }` checks out the buyer's **cart**. Or send `"listing_ids": [3, 6]` as well to buy specific items without using the cart.
 
 Response `201`:
 ```json
@@ -185,10 +209,11 @@ Response `201`:
   "items": [ { "listing_id": 3, "title": "Brown leather belt", "price": 800 } ]
 }
 ```
-Errors: `409` `{ "error": "Item already sold" }` (nothing is changed), `400` bad input, `401`, `403`.
+Errors: `409` `{ "error": "Item already sold", "listing_ids": [3] }` (nothing is changed; if two buyers click at the same moment, exactly one wins), `400` bad input or empty cart, `404` listing not found, `401`, `403`.
+On success, sold items also disappear from every cart.
 Frontend: on `409`, show "no longer available" and remove the item from the cart.
 
-### GET /orders/mine
+### GET /orders/mine ✅
 Who: buyer. Response: array of
 ```json
 {
