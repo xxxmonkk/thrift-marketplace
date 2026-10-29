@@ -1,0 +1,311 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   SALIXIR — GLOBAL DESIGN SYSTEM
+   ============================================================ */
+
+@layer base {
+  :root {
+    --color-espresso: #211713;
+    --color-charcoal: #171614;
+    --color-parchment: #F0E5D0;
+    --color-ivory: #E4D6BB;
+    --color-gold: #B39458;
+    --color-sepia: #856849;
+    --color-walnut: #483326;
+    --color-olive: #77745A;
+    --color-border: #C4B08D;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-parchment text-espresso font-sans antialiased;
+    min-height: 100vh;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  /* Focus ring */
+  :focus-visible {
+    outline: 2px solid #B39458;
+    outline-offset: 2px;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #E4D6BB;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #856849;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #B39458;
+  }
+
+  /* Selection */
+  ::selection {
+    background-color: rgba(179, 148, 88, 0.25);
+    color: #211713;
+  }
+}
+
+@layer components {
+  /* ── TYPOGRAPHY ──────────────────────────────────── */
+  .display-heading {
+    @apply font-display font-light tracking-wide leading-tight;
+  }
+
+  .editorial-heading {
+    @apply font-serif font-semibold tracking-tight leading-snug;
+  }
+
+  .label-text {
+    @apply font-sans text-xs font-medium tracking-widest uppercase;
+  }
+
+  /* ── ORNAMENTAL ELEMENTS ─────────────────────────── */
+  .ornament-divider {
+    @apply relative flex items-center gap-4 my-6;
+  }
+  .ornament-divider::before,
+  .ornament-divider::after {
+    content: '';
+    @apply flex-1 border-t border-border-soft;
+  }
+
+  .ornament-corner {
+    @apply absolute border border-gold;
+    width: 12px;
+    height: 12px;
+  }
+
+  .card-frame {
+    @apply relative border border-border-soft bg-ivory overflow-hidden;
+  }
+  .card-frame::before {
+    content: '';
+    @apply absolute inset-0 border border-border-soft/30;
+    margin: 4px;
+    pointer-events: none;
+  }
+
+  /* ── BUTTONS ─────────────────────────────────────── */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 
+           px-6 py-3 
+           bg-gold text-white font-sans text-sm font-medium tracking-wide
+           border border-gold
+           transition-all duration-200
+           hover:bg-sepia hover:border-sepia
+           active:scale-95
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 
+           px-6 py-3 
+           bg-transparent text-espresso font-sans text-sm font-medium tracking-wide
+           border border-border-soft
+           transition-all duration-200
+           hover:border-gold hover:text-gold
+           active:scale-95
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 
+           px-4 py-2 
+           bg-transparent text-sepia font-sans text-sm font-medium
+           transition-all duration-150
+           hover:text-gold
+           active:scale-95
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2
+           px-4 py-2
+           bg-red-800 text-white font-sans text-sm font-medium
+           border border-red-900
+           transition-all duration-200
+           hover:bg-red-900
+           active:scale-95
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* ── FORM ELEMENTS ───────────────────────────────── */
+  .input-field {
+    @apply w-full px-4 py-3 
+           bg-parchment border border-border-soft
+           font-sans text-sm text-espresso placeholder-olive/60
+           transition-colors duration-150
+           focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/30;
+  }
+
+  .select-field {
+    @apply w-full px-4 py-3 
+           bg-parchment border border-border-soft
+           font-sans text-sm text-espresso
+           appearance-none cursor-pointer
+           transition-colors duration-150
+           focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/30;
+  }
+
+  .textarea-field {
+    @apply w-full px-4 py-3 
+           bg-parchment border border-border-soft
+           font-sans text-sm text-espresso placeholder-olive/60
+           resize-y min-h-[120px]
+           transition-colors duration-150
+           focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/30;
+  }
+
+  .form-label {
+    @apply block font-sans text-xs font-medium tracking-widest uppercase text-walnut mb-2;
+  }
+
+  .form-error {
+    @apply font-sans text-xs text-red-700 mt-1;
+  }
+
+  /* ── BADGES ──────────────────────────────────────── */
+  .badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-1 
+           font-sans text-xs font-medium tracking-wide;
+  }
+
+  .badge-live {
+    @apply badge bg-emerald-100 text-emerald-800 border border-emerald-200;
+  }
+
+  .badge-pending {
+    @apply badge bg-amber-100 text-amber-800 border border-amber-200;
+  }
+
+  .badge-sold {
+    @apply badge bg-red-100 text-red-800 border border-red-200;
+  }
+
+  .badge-rejected {
+    @apply badge bg-red-100 text-red-900 border border-red-200;
+  }
+
+  .badge-changes {
+    @apply badge bg-orange-100 text-orange-800 border border-orange-200;
+  }
+
+  .badge-gold {
+    @apply badge bg-gold/10 text-sepia border border-gold/30;
+  }
+
+  /* ── CARDS ───────────────────────────────────────── */
+  .listing-card {
+    @apply bg-ivory border border-border-soft overflow-hidden
+           transition-all duration-300
+           hover:shadow-vintage-lg hover:-translate-y-0.5;
+  }
+
+  /* ── SKELETON LOADER ─────────────────────────────── */
+  .skeleton {
+    @apply bg-gradient-to-r from-ivory via-parchment to-ivory
+           bg-[length:200%_100%] animate-shimmer;
+  }
+
+  /* ── PAGE SECTION ────────────────────────────────── */
+  .section-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .page-section {
+    @apply py-16 sm:py-24;
+  }
+
+  /* ── ANNOUNCEMENT STRIP ──────────────────────────── */
+  .announcement-strip {
+    @apply bg-walnut text-ivory text-center py-2 px-4
+           font-sans text-xs tracking-widest uppercase;
+  }
+
+  /* ── DARK CARD ───────────────────────────────────── */
+  .dark-card {
+    @apply bg-espresso border border-walnut text-parchment;
+  }
+
+  /* ── TOAST ───────────────────────────────────────── */
+  .toast {
+    @apply fixed bottom-6 right-6 z-50
+           flex items-start gap-3 p-4
+           border shadow-vintage-lg
+           max-w-sm font-sans text-sm
+           animate-slide-up;
+  }
+  .toast-success {
+    @apply toast bg-ivory border-emerald-300 text-espresso;
+  }
+  .toast-error {
+    @apply toast bg-ivory border-red-300 text-espresso;
+  }
+  .toast-info {
+    @apply toast bg-ivory border-gold/50 text-espresso;
+  }
+
+  /* ── NAV ─────────────────────────────────────────── */
+  .nav-link {
+    @apply font-sans text-sm font-medium text-parchment/80
+           transition-colors duration-150
+           hover:text-gold;
+  }
+  .nav-link-active {
+    @apply text-gold;
+  }
+}
+
+@layer utilities {
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Vintage image treatment */
+  .img-vintage {
+    filter: sepia(18%) contrast(104%) brightness(96%) saturate(90%);
+    transition: filter 0.4s ease, transform 0.7s ease-out;
+  }
+  /* Don't de-saturate on hover — keep consistent antique tone */
+  .img-vintage:hover {
+    filter: sepia(10%) contrast(102%) brightness(98%) saturate(95%);
+  }
+
+  /* Utility for very low opacity (not in Tailwind by default) */
+  .opacity-12 {
+    opacity: 0.12;
+  }
+
+  /* Gold accent underline */
+  .underline-gold {
+    text-decoration-line: underline;
+    text-decoration-color: #B39458;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1px;
+  }
+}
